@@ -1,0 +1,628 @@
+CREATE DATABASE my_DatabaseName1;
+
+USE my_DatabaseName1;
+
+
+CREATE TABLE department (
+dep_id INTEGER PRIMARY KEY,
+dep_name VARCHAR(20),
+dep_location VARCHAR(15)
+
+);
+
+select * from department;
+
+insert into department (dep_id,dep_name,dep_location)
+values ('1001', 'FINANCE','SYDNEY'),
+       ('2001', 'AUDIT','MELBOURNE'),
+       ('3001', 'MARKETING ','PERTH'),
+       ('4001', 'PRODUCTION ','BRISBANE');
+
+CREATE TABLE salary_grade (
+grade INTEGER PRIMARY KEY,
+min_salary INTEGER,
+max_salary INTEGER,
+dep_id INTEGER REFERENCES department(dep_id)
+);
+
+insert into salary_grade (grade,min_salary,max_salary,dep_id )
+values (1, 800,1300,1001),
+       (2, 1301,1500,200),
+       (3, 1501,2100,3001),
+       (4, 2101,3100,4001),
+       (5, 3101,9999,null);
+       
+       select * from salary_grade;
+       alter table department add dep_id int references salary_grade (dep_id);
+
+
+CREATE TABLE employees(
+emp_id INTEGER PRIMARY KEY,
+emp_name VARCHAR(15),
+job_name VARCHAR(10),
+manager_id INTEGER ,
+hire_date DATE ,
+salary DECIMAL(10, 2),
+commission DECIMAL(7,2),
+dep_id INTEGER REFERENCES department(dep_id)  ,
+grade INTEGER REFERENCES salary_grade(grade)
+);
+
+insert into employees (emp_id,emp_name,job_name,manager_id,hire_date,salary,commission,dep_id,grade )
+values (68319,' KAYLING','PRESIDENT',null,'1991-11-18','6000.00',null,'1001','1'),
+       (66928,' BLAZE','MANAGER','68319','1991-05-01 ', 2750.00,null,'3001','2'),
+       (67832,' CLARE','MANAGER','68319','1991-06-09 ', 2550.00,null,'1001','3'),
+       (65646,' JONAS','ANALYST','68319','1991-04-02 ', 2957.00,null,'2001','4'),
+       (67858,'SCARLET','MANAGER','65646','1997-04-19', 3100.00,null,'2001','5'),
+	   (69062,'FRANK','ANALYST','65646','1991-12-03', 3100.00,null,'2001',null),
+       (63679,'SANDRINE','CLERK','69062','1990-12-18', 900.00,null,'2001',null),
+       (64989,'ADELYN ','SALESMAN',' 66928','1991-02-20', 1350.00 , 400.00,'3001',null),
+       (65271,'WADE ','SALESMAN',' 66928','1991-02-22', 1700.00 , 600.00,'3001',null),
+	   (66564,'MADDEN ','SALESMAN',' 66928','1991-09-28', 1350.00 , 1500.00,'3001',null),
+	   (68454,'TUCKER ','SALESMAN',' 66928','1991-09-08', 1600.00 ,  0.00,'3001',null),
+	   (68736,' ADNRES ','CLERK','67858','1997-05-23', 1200.00 , null,' 2001',null),
+       (69000 ,' JULIUS ','CLERK','66928','1991-12-03', 1050.00 , null,' 3001',null),
+       (69324,' MARKER  ','CLERK','67832','1992-01-23', 1400.00 , null,' 1001',null);
+       
+       
+     select * from employees;
+     
+     SELECT salary
+FROM employees;
+     
+       
+   SELECT DISTINCT job_name 
+FROM employees
+
+SELECT emp_name , salary * 1.15 AS increased_salary FROM employees;
+
+
+SELECT emp_id,
+       emp_name,
+       salary,
+       to_char(hire_date,'MONTH DD,YYYY')
+FROM employees;
+
+   
+SELECT department_id "Department Code", 
+COUNT(*) "No of Employees" 
+FROM employees 
+GROUP BY department_id;
+       
+ SELECT COUNT(*)
+FROM employees
+WHERE salary> 2200;      
+
+SELECT DISTINCT department_id 
+	FROM employees;
+    
+    SELECT *
+FROM employees
+WHERE dep_id NOT IN (2001);
+       
+  SELECT *
+FROM employees
+WHERE hire_date<('1991-1-1');     
+ 
+ SELECT avg(salary)
+FROM employees
+WHERE job_name = 'ANALYST';
+    
+    
+    SELECT * FROM employees
+WHERE emp_name LIKE 'B%' OR emp_name LIKE '%E';
+  
+    SELECT * FROM department
+WHERE dep_name LIKE 'B%' OR dep_name LIKE '%E';
+  
+    SELECT * FROM department
+WHERE dep_location LIKE 'F%' OR dep_location LIKE '%N';
+  
+  
+  SELECT *
+FROM employees
+WHERE commission>salary;
+      
+      
+      SELECT *
+FROM employees
+WHERE (1.25*salary) > 3000;
+
+SELECT *
+FROM employees
+WHERE to_char(hire_date, 'mon')='jan';
+
+SELECT e.emp_name || ' works for ' || m.emp_name
+FROM employees e,
+     employees m
+WHERE e.manager_id = m.emp_id;
+
+
+
+SELECT *
+FROM employees
+WHERE job_name = 'CLERK';
+
+
+
+SELECT emp_id, hire_date
+FROM employees
+WHERE hire_date <= DATEADD(year, -27, GETDATE());
+              
+              
+SELECT *
+FROM employees
+WHERE salary <3500;
+
+
+SELECT emp_name,
+       job_name,
+       salary
+FROM employees
+WHERE job_name = 'ANALYST';
+
+
+SELECT *
+FROM employees
+WHERE hire_date<('1991-1-1');
+       
+ SELECT *
+FROM employees
+WHERE hire_date<('1991-1-1');      
+       
+SELECT e.emp_id,
+       e.emp_name,
+       e.hire_date,
+       e.salary
+FROM employees e
+WHERE hire_date <'1991-04-01';   
+
+
+SELECT e.emp_name,
+       e.job_name
+FROM employees e
+WHERE manager_id IS NULL;
+       
+       
+SELECT *
+FROM employees
+WHERE hire_date<('1991-1-1');
+       
+       
+SELECT emp_id,
+       emp_name,
+       salary,
+       age(CURRENT_DATE, hire_date) "Experience"
+FROM employees
+WHERE manager_id=68319;  
+
+
+SELECT emp_id,
+       emp_name,
+       salary,
+       age(CURRENT_DATE, hire_date) "Experience"
+FROM employees
+WHERE (salary/30)>100;
+
+
+SELECT emp_name
+FROM employees
+WHERE hire_date + interval '96 months' > '1999-12-31';
+
+
+SELECT *
+FROM employees
+WHERE mod(salary,2) = 1;
+
+SELECT *
+FROM employees
+WHERE length(TRIM(TO_CHAR(salary,'9999'))) = 3;
+
+
+
+SELECT *
+FROM employees
+WHERE to_char(hire_date,'MON') LIKE 'APR%';
+
+SELECT *
+FROM employees
+WHERE to_char(hire_date,'DD') < '19';
+     
+  SELECT *
+FROM employees
+WHERE job_name = 'SALESMAN'
+  AND EXTRACT(MONTH
+FROM age(CURRENT_DATE, hire_date)) > 10;   
+     
+	SELECT *
+FROM department
+WHERE to_char (hire_date,'YYYY') IN ('1991')
+  AND (dep_id = 3001
+       OR dep_id =1001) ;
+    
+
+SELECT *
+FROM employees
+WHERE dep_id=1001
+  OR dep_id=2001;     36
+  
+  
+  
+  SELECT *
+FROM employees
+WHERE job_name ='CLERK'
+  AND dep_id = 2001;           37
+  
+  
+  SELECT *
+FROM employees
+WHERE job_name IN ('CLERK','MANAGER');   38
+
+
+
+SELECT *
+FROM employees
+WHERE to_char(hire_date,'MONTH') NOT LIKE 'FEB%';
+
+
+SELECT *
+FROM employees
+WHERE hire_date BETWEEN '1991-06-01' AND '1991-06-30';   40
+
+SELECT *
+FROM employees
+WHERE 12*salary BETWEEN 24000 AND 50000;      41
+
+
+
+SELECT *
+FROM employees
+WHERE hire_date<('1991-1-1');          42
+
+
+SELECT *
+FROM employees
+WHERE manager_id IN (63679,
+                     68319,
+                     66564,
+                     69000);           43
+                     
+                     
+ SELECT *
+FROM employees
+WHERE to_char(hire_date,'YY') BETWEEN '90' AND '99';          
+
+SELECT *
+FROM employees
+WHERE job_name = 'MANAGER'
+  AND (dep_id = 1001
+       OR dep_id =2001);          44
+       
+       
+       SELECT *
+FROM employees
+WHERE to_char(hire_date,'MON') = 'FEB'
+  AND salary BETWEEN 1000 AND 2000;
+
+SELECT e.emp_id,
+       e.emp_name,
+       e.job_name,
+       e.manager_id,
+       e.hire_date,
+       e.salary,
+       e.commission,
+       e.dep_id,
+       d.dep_name
+FROM employees e,
+     department d
+WHERE e.dep_id = d.dep_id;     47
+
+
+
+SELECT e.emp_name,
+       e.job_name,
+       (12*e.salary)"Annual Salary",
+       e.dep_id,
+       d.dep_name,
+       s.grade
+FROM employees e,
+     department d,
+     salary_grade s
+WHERE e.dep_id = d.dep_id
+  AND e.salary BETWEEN s.min_sal AND s.max_sal
+  AND (((12*e.salary)>= 60000)
+       OR (e.job_name != 'ANALYST'))
+
+
+SELECT *
+FROM employees w,
+     employees m
+WHERE w.manager_id = m.emp_id
+  AND w.salary> m.salary;          49
+  
+  SELECT e.emp_name,
+       e.dep_id,
+       e.salary,
+       e.commission
+FROM employees e,
+     department d
+WHERE e.dep_id = d.dep_id
+  AND d.dep_location = 'PERTH'
+  AND e.salary BETWEEN 2000 AND 5000;          50
+  
+  
+  SELECT s.grade,
+       e.emp_name
+FROM employees e,
+     salary_grade s
+WHERE e.dep_id IN (1001,
+                   3001)
+  AND hire_date < ('1992-12-31')
+  AND (e.salary BETWEEN s.min_sal AND s.max_sal
+       AND s.grade NOT IN (4));
+
+SELECT w.emp_id,
+       w.emp_name,
+       w.job_name,
+       w.manager_id,
+       w.hire_date,
+       w.salary,
+       w.dep_id,
+       m.emp_name
+FROM employees w,
+     employees m
+WHERE w.manager_id = m.emp_id
+  AND m.emp_name = 'JONAS';             52
+  
+SELECT e.emp_name,
+       e.salary
+FROM employees e,
+     salary_grade s
+WHERE e.emp_name = 'FRANK'
+  AND e.salary BETWEEN s.min_sal AND s.max_sal
+  AND e.salary = s.max_sal ;  
+  
+  
+  SELECT *
+FROM employees
+WHERE job_name IN ('MANAGER',
+                   'ANALYST')
+  AND salary BETWEEN 2000 AND 5000
+  AND commission IS NULL;                     53
+  
+  
+ SELECT *
+FROM employees
+WHERE job_name IN ('MANAGER',
+                   'ANALYST')
+  AND salary BETWEEN 2000 AND 5000
+  AND commission IS NULL;                   54
+  
+  
+SELECT e.emp_id,
+       e.emp_name,
+       e.dep_id,
+       e.salary,
+       d.dep_location
+FROM employees e,
+     department d
+WHERE e.dep_id = d.dep_id
+  AND d.dep_location IN ('SYDNEY',
+                         'MELBOURNE')
+  AND to_char(e.hire_date,'YY') = '91'
+  AND e.salary BETWEEN 2000 AND 5000;
+  
+  
+  SELECT e.dep_id,
+       e.emp_id,
+       e.emp_name,
+       e.salary,
+       d.dep_name,
+       d.dep_location,
+       s.grade
+FROM employees e,
+     salary_grade s,
+     department d
+WHERE e.dep_id = d.dep_id
+  AND e.salary BETWEEN s.min_sal AND s.max_sal
+  AND s.grade IN (3,4,
+                  5)
+  AND EXTRACT(YEAR
+              FROM age(CURRENT_DATE, hire_date)) > 25
+  AND (d.dep_name = 'MARKETING'
+       AND D.dep_location IN ('MELBOURNE',
+                              'PERTH'));
+                              
+ SELECT *
+FROM employees w,
+     employees m
+WHERE w.manager_id = m.emp_id
+  AND w.hire_date < m.hire_date;             58
+  
+  
+
+SELECT *
+FROM employees e,
+     salary_grade s
+WHERE e.salary BETWEEN s.min_sal AND s.max_sal
+  AND s.grade = 4;
+  
+  
+  SELECT * 
+FROM employees 
+ORDER BY salary ASC;   60
+
+
+  SELECT *
+FROM employees
+ORDER BY dep_id ASC,
+         job_name DESC;           61
+
+
+  
+ SELECT DISTINCT job_name
+FROM employees
+ORDER BY job_name DESC;           62
+  
+  
+  
+ SELECT emp_id,
+       emp_name,
+       salary Monthly_Salary,
+       salary/30 Daily_Salary,
+       12*salary Anual_Salary
+FROM employees
+ORDER BY Anual_Salary ASC;      63
+
+
+
+
+SELECT *
+FROM employees
+WHERE job_name='CLERK'
+  OR job_name='ANALYST'
+ORDER BY job_name DESC;  64
+
+
+SELECT dep_location
+FROM department d,
+     employees e
+WHERE e.emp_name = 'CLARE'
+  AND e.dep_id = d.dep_id ;         65
+  
+  
+  
+  SELECT *
+FROM employees
+WHERE hire_date IN ('1991-5-01',
+                    '1991-12-03',
+                    '1990-01-19')
+ORDER BY hire_date ASC;                        66
+
+
+
+SELECT *
+FROM employees
+WHERE salary < 1000
+ORDER BY salary;                  67
+
+
+
+SELECT *
+FROM employees
+WHERE salary < 1000
+ORDER BY salary;
+
+
+SELECT * 
+FROM employees 
+ORDER BY salary ASC;           68
+
+
+SELECT *
+FROM employees e
+ORDER BY e.job_name ASC,
+         e.emp_id DESC ;          69
+         
+         
+         
+         
+ SELECT DISTINCT job_name
+FROM employees
+WHERE dep_id IN (2001,
+                 3001)
+ORDER BY job_name DESC;            70
+
+
+
+SELECT *
+FROM employees
+WHERE job_name NOT IN ('PRESIDENT',
+                       'MANAGER')
+ORDER BY salary ASC;                     71
+
+
+SELECT *
+FROM employees
+WHERE (12*salary) < 25000
+ORDER BY salary ASC;                      72
+
+
+SELECT e.emp_id,
+       e.emp_name,
+       12*salary "Annual Salary",
+       (12*salary)/365 "Daily Salary"
+FROM employees e
+WHERE e.job_name = 'SALESMAN'
+ORDER BY "Annual Salary" ASC;             73
+
+
+
+SELECT emp_id,
+       emp_name,
+       hire_date,
+       CURRENT_DATE,
+       age(CURRENT_DATE, hire_date) EXP
+FROM employees
+ORDER BY EXP ASC;         
+  
+  
+  SELECT *
+FROM employees
+WHERE hire_date>('1991-6-30')
+  AND date_part('year',hire_date)=1991
+ORDER BY job_name ASC;
+
+SELECT *
+FROM employees e,
+     department d
+WHERE (dep_name = 'FINANCE'
+       OR dep_name ='AUDIT')
+  AND e.dep_id = d.dep_id
+ORDER BY e.dep_id ASC;                       76
+
+SELECT *
+FROM employees e,
+     salary_grade s
+WHERE e.salary BETWEEN s.min_sal AND s.max_sal
+ORDER BY grade ASC;
+
+SELECT e.emp_name,
+       e.job_name,
+       d.dep_name,
+       e.salary,
+       s.grade
+FROM employees e,
+     department d,
+     salary_grade s
+WHERE e.dep_id = d.dep_id
+  AND e.salary BETWEEN s.min_sal AND s.max_sal
+ORDER BY e.dep_id ;
+
+SELECT e.emp_name,
+       e.job_name,
+       e.salary,
+       s.grade,
+       d.dep_name
+FROM employees e,
+     department d,
+     salary_grade s
+WHERE e.dep_id = d.dep_id
+  AND e.salary BETWEEN s.min_sal AND s.max_sal
+  AND e.job_name NOT IN('CLERK')
+ORDER BY e.salary DESC;
+
+SELECT e.emp_id,
+       e.emp_name,
+       e.salary,
+       s.grade,
+       d.dep_name,
+       age(CURRENT_DATE, hire_date) AS "Experience",
+       12 * e.salary "Annual Salary"
+FROM employees e,
+     department d,
+     salary_grade s
+WHERE e.dep_id IN (1001,
+                   2001)
+  AND e.dep_id = d.dep_id
+  AND e.salary BETWEEN s.min_sal AND s.max_sal ;
